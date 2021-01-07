@@ -29,4 +29,38 @@ public class BaseNetController {
         return baseNetPriceService.listWithPage(query);
     }
 
+//物料（名称，材质，规格）  时间  城市 厂家
+
+    @GetMapping("/same-time")
+    @ApiOperation(value = "同一物料、时间，指定城市内价格查询")
+    public Page<NetPriceVO> sameTime(NetPriceQuery query) {
+        handleMaterial(query);
+        return baseNetPriceService.listWithPage(query);
+    }
+
+    @GetMapping("/same-area")
+    @ApiOperation(value = "同一物料、城市，指定时间段内价格查询")
+    public Page<NetPriceVO> sameArea(NetPriceQuery query) {
+        handleMaterial(query);
+        return baseNetPriceService.listWithPage(query);
+    }
+
+    @GetMapping("/same-manufacturer")
+    @ApiOperation(value = "同一物料、厂家，指定时间段内价格查询")
+    public Page<NetPriceVO> sameManufacturer(NetPriceQuery query) {
+        handleMaterial(query);
+        return baseNetPriceService.listWithPage(query);
+    }
+    /**
+     * 处理物料 物料名称-材质-规格
+     * @param query
+     * @return void
+     **/
+    private void handleMaterial(NetPriceQuery query){
+        String material = query.getMaterial();
+        String[] split = material.split("-");
+        query.setMaterialName(split[0]);
+        query.setMaterialMaterial(split[1]);
+        query.setMaterialSpec(split[2]);
+    }
 }
