@@ -22,7 +22,7 @@ mybatis-plus:
 
 logging:
   level:
-    cn:
-      yematech:
-        wms:
+    com:
+      ymkj:
+        analysis:
           repository: debug
