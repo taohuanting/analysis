@@ -8,6 +8,7 @@ import com.ymkj.analysis.service.query.PikeNetPriceQuery;
 import com.ymkj.analysis.service.vo.NetPriceSourceVO;
 import com.ymkj.analysis.service.vo.NetPriceVO;
 import com.ymkj.analysis.service.vo.PikeNetPriceVO;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
