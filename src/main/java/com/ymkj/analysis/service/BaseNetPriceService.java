@@ -3,19 +3,18 @@ package com.ymkj.analysis.service;
 
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.ymkj.analysis.service.query.NetPriceQuery;
-import com.ymkj.analysis.service.query.PikeNetPriceQuery;
-import com.ymkj.analysis.service.vo.NetPriceSourceVO;
-import com.ymkj.analysis.service.vo.NetPriceVO;
-import com.ymkj.analysis.service.vo.PikeNetPriceVO;
-import org.springframework.stereotype.Service;
+import com.ymkj.analysis.entity.domain.BaseNetPrice;
+import com.ymkj.analysis.entity.query.NetPriceQuery;
+import com.ymkj.analysis.entity.query.PikeNetPriceQuery;
+import com.ymkj.analysis.entity.dto.NetPriceSourceDTO;
+import com.ymkj.analysis.entity.dto.PikeNetPriceDTO;
 
 import java.util.List;
 
 /**
  * 网价管理业务接口
  *
- * @author wkn
+ * @author tao
  */
 public interface BaseNetPriceService  {
     /**
@@ -24,7 +23,7 @@ public interface BaseNetPriceService  {
      * @param query 查询条件对象
      * @return result
      */
-    Page<NetPriceVO> listWithPage(NetPriceQuery query);
+    Page<BaseNetPrice> getPage(NetPriceQuery query);
 
     /**
      * 获取网价数据
@@ -43,7 +42,7 @@ public interface BaseNetPriceService  {
      *
      * @return result
      */
-    List<NetPriceSourceVO> getSource();
+    List<NetPriceSourceDTO> getSource();
 
     /**
      * 查询网价信息
@@ -51,6 +50,11 @@ public interface BaseNetPriceService  {
      * @param netPriceQuery 查询条件表单
      * @return result
      */
-    List<PikeNetPriceVO> selectPikeNetPrice(List<PikeNetPriceQuery> netPriceQuery);
+    List<PikeNetPriceDTO> selectPikeNetPrice(List<PikeNetPriceQuery> netPriceQuery);
 
+    Page<BaseNetPrice> getPageBySameTime(NetPriceQuery query);
+
+    Page<BaseNetPrice> getPageBySameArea(NetPriceQuery query);
+
+    Page<BaseNetPrice> getPageBySameManufacturer(NetPriceQuery query);
 }

@@ -1,8 +1,8 @@
-package com.ymkj.analysis.service.vo;
+package com.ymkj.analysis.entity.dto;
 
 
-import com.ymkj.analysis.domain.BaseMaterial;
-import com.ymkj.analysis.domain.BaseNetPrice;
+import com.ymkj.analysis.entity.domain.BaseMaterial;
+import com.ymkj.analysis.entity.domain.BaseNetPrice;
 import com.ymkj.analysis.utils.DateUtil;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -13,11 +13,11 @@ import java.io.Serializable;
 /**
  * 网价视图对象
  *
- * @author wkn
+ * @author tao
  */
 @Data
 @ApiModel(value = "网价")
-public class NetPriceVO implements Serializable {
+public class NetPriceDTO implements Serializable {
     /**
      * 唯一主键UUID
      */
@@ -87,7 +87,7 @@ public class NetPriceVO implements Serializable {
     @ApiModelProperty("区域")
     private String area;
 
-    public NetPriceVO(BaseNetPrice baseNetPrice) {
+    public NetPriceDTO(BaseNetPrice baseNetPrice) {
         this.id = baseNetPrice.getId();
         this.materialName = baseNetPrice.getMaterialName();
         this.specification = baseNetPrice.getSpecification();
@@ -99,7 +99,7 @@ public class NetPriceVO implements Serializable {
         this.publishDate = DateUtil.formatDate(baseNetPrice.getPublishTime(),"yyyy-MM-dd");
         this.area = baseNetPrice.getArea();
     }
-    public NetPriceVO(BaseNetPrice baseNetPrice, String dataFormat) {
+    public NetPriceDTO(BaseNetPrice baseNetPrice, String dataFormat) {
         this.id = baseNetPrice.getId();
         this.materialName = baseNetPrice.getMaterialName();
         this.specification = baseNetPrice.getSpecification();

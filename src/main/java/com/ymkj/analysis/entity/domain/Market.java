@@ -1,9 +1,9 @@
-package com.ymkj.analysis.domain;
+package com.ymkj.analysis.entity.domain;
 
 import lombok.Data;
 
 /**
- * @author wkn
+ * @author tao
  */
 @Data
 public class Market {

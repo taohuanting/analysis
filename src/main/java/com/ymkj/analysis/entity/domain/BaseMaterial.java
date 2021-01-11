@@ -1,4 +1,4 @@
-package com.ymkj.analysis.domain;
+package com.ymkj.analysis.entity.domain;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
@@ -11,7 +11,7 @@ import java.util.Date;
 /**
  * 物料信息实体类
  *
- * @author wkn
+ * @author tao
  */
 @Data
 @TableName("t_base_material")

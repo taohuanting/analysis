@@ -2,11 +2,11 @@ package com.ymkj.analysis.service;
 
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.ymkj.analysis.domain.BaseArea;
+import com.ymkj.analysis.entity.domain.BaseArea;
 import org.apache.ibatis.annotations.Mapper;
 
 /**
- * @author wkn
+ * @author tao
  */
 @Mapper
 public interface BaseAreaMapper extends BaseMapper<BaseArea> {

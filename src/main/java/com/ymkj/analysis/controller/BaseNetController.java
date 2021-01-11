@@ -1,9 +1,9 @@
 package com.ymkj.analysis.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.ymkj.analysis.entity.domain.BaseNetPrice;
+import com.ymkj.analysis.entity.query.NetPriceQuery;
 import com.ymkj.analysis.service.BaseNetPriceService;
-import com.ymkj.analysis.service.query.NetPriceQuery;
-import com.ymkj.analysis.service.vo.NetPriceVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,42 +25,28 @@ public class BaseNetController {
 
     @GetMapping
     @ApiOperation(value = "条件分页查询网价")
-    public Page<NetPriceVO> getPage(NetPriceQuery query) {
-        return baseNetPriceService.listWithPage(query);
+    public Page<BaseNetPrice> getPage(NetPriceQuery query) {
+        return baseNetPriceService.getPage(query);
     }
 
 //物料（名称，材质，规格）  时间  城市 厂家
 
     @GetMapping("/same-time")
-    @ApiOperation(value = "同一物料、时间，指定城市内价格查询")
-    public Page<NetPriceVO> sameTime(NetPriceQuery query) {
-        handleMaterial(query);
-        return baseNetPriceService.listWithPage(query);
+    @ApiOperation(value = "同一物料、时间，各城市价格查询", notes = "取各城市当天先发布的")
+    public Page<BaseNetPrice> sameTime(NetPriceQuery query) {
+        return baseNetPriceService.getPageBySameTime(query);
     }
 
     @GetMapping("/same-area")
-    @ApiOperation(value = "同一物料、城市，指定时间段内价格查询")
-    public Page<NetPriceVO> sameArea(NetPriceQuery query) {
-        handleMaterial(query);
-        return baseNetPriceService.listWithPage(query);
+    @ApiOperation(value = "同一物料、城市，指定时间段内价格查询", notes = "取各城市当天先发布的")
+    public Page<BaseNetPrice> sameArea(NetPriceQuery query) {
+        return baseNetPriceService.getPageBySameArea(query);
     }
 
     @GetMapping("/same-manufacturer")
-    @ApiOperation(value = "同一物料、厂家，指定时间段内价格查询")
-    public Page<NetPriceVO> sameManufacturer(NetPriceQuery query) {
-        handleMaterial(query);
-        return baseNetPriceService.listWithPage(query);
+    @ApiOperation(value = "同一物料、厂家，指定时间段内价格查询", notes = "取每天第一次发布的")
+    public Page<BaseNetPrice> sameManufacturer(NetPriceQuery query) {
+        return baseNetPriceService.getPageBySameManufacturer(query);
     }
-    /**
-     * 处理物料 物料名称-材质-规格
-     * @param query
-     * @return void
-     **/
-    private void handleMaterial(NetPriceQuery query){
-        String material = query.getMaterial();
-        String[] split = material.split("-");
-        query.setMaterialName(split[0]);
-        query.setMaterialMaterial(split[1]);
-        query.setMaterialSpec(split[2]);
-    }
+
 }

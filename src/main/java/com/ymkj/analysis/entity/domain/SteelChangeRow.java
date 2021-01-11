@@ -1,4 +1,4 @@
-package com.ymkj.analysis.domain;
+package com.ymkj.analysis.entity.domain;
 
 
 import lombok.Data;
@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * 钢铁网变更记录
  *
- * @author wkn
+ * @author tao
  */
 @Data
 public class SteelChangeRow {

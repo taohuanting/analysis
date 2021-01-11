@@ -4,7 +4,7 @@ package com.ymkj.analysis.utils;
 /**
  * 系统枚举常量工具
  *
- * @author wkn
+ * @author tao
  */
 public class SystemConst {
 

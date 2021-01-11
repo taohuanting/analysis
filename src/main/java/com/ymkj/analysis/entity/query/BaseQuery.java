@@ -1,4 +1,4 @@
-package com.ymkj.analysis.service.query;
+package com.ymkj.analysis.entity.query;
 
 
 import io.swagger.annotations.ApiModel;
@@ -8,7 +8,7 @@ import lombok.Data;
 /**
  * 基础查询条件类
  *
- * @author wkn
+ * @author tao
  */
 @Data
 @ApiModel

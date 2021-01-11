@@ -1,4 +1,4 @@
-package com.ymkj.analysis.utils.enums;
+package com.ymkj.analysis.entity.enums;
 
 
 import java.util.LinkedHashMap;
@@ -7,7 +7,7 @@ import java.util.Map;
 /**
  * 网价来源
  *
- * @author wkn
+ * @author tao
  */
 public enum NetPriceSource {
     /**

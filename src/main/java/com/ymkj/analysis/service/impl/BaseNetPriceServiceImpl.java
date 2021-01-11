@@ -2,21 +2,22 @@ package com.ymkj.analysis.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.ymkj.analysis.domain.*;
+import com.ymkj.analysis.entity.domain.*;
 import com.ymkj.analysis.repository.BaseNetPriceMapper;
 import com.ymkj.analysis.service.BaseAreaMapper;
 import com.ymkj.analysis.service.BaseNetPriceService;
-import com.ymkj.analysis.service.query.NetPriceQuery;
-import com.ymkj.analysis.service.query.PikeNetPriceQuery;
-import com.ymkj.analysis.service.vo.NetPriceSourceVO;
-import com.ymkj.analysis.service.vo.NetPriceVO;
-import com.ymkj.analysis.service.vo.PikeNetPriceVO;
+import com.ymkj.analysis.entity.query.NetPriceQuery;
+import com.ymkj.analysis.entity.query.PikeNetPriceQuery;
+import com.ymkj.analysis.entity.dto.NetPriceSourceDTO;
+import com.ymkj.analysis.entity.dto.NetPriceDTO;
+import com.ymkj.analysis.entity.dto.PikeNetPriceDTO;
 import com.ymkj.analysis.utils.BeanMapper;
 import com.ymkj.analysis.utils.DateUtil;
 import com.ymkj.analysis.utils.SystemConst;
-import com.ymkj.analysis.utils.enums.NetPriceSource;
-import com.ymkj.analysis.utils.enums.SteelCityCode;
+import com.ymkj.analysis.entity.enums.NetPriceSource;
+import com.ymkj.analysis.entity.enums.SteelCityCode;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -29,7 +30,7 @@ import java.util.stream.Collectors;
 /**
  * 网价业务实现
  *
- * @author wkn
+ * @author tao
  */
 @Slf4j
 @Service
@@ -51,7 +52,66 @@ public class BaseNetPriceServiceImpl implements BaseNetPriceService {
 
 
     @Override
-    public Page<NetPriceVO> listWithPage(NetPriceQuery query) {
+    public Page<BaseNetPrice> getPageBySameTime(NetPriceQuery query) {
+        handleMaterial(query);
+        return netPriceMapper.selectPage(new Page<>(query.getPage(), query.getPageSize()),
+                new LambdaQueryWrapper<BaseNetPrice>()
+                        .eq(StringUtils.hasText(query.getMaterialName()), BaseNetPrice::getMaterialName, query.getMaterialName())
+                        .eq(StringUtils.hasText(query.getMaterialMaterial()), BaseNetPrice::getMaterial, query.getMaterialMaterial())
+                        .eq(StringUtils.hasText(query.getMaterialSpec()), BaseNetPrice::getSpecification, query.getMaterialSpec())
+                        .between(null!=query.getPublishDateStart()&&null!=query.getPublishDateEnd(), BaseNetPrice::getPublishTime, query.getPublishDateStart(), query.getPublishDateEnd())
+                        .in(CollectionUtils.isNotEmpty(query.getAreas()), BaseNetPrice::getArea, query.getAreas())
+                        .orderByDesc(BaseNetPrice::getPublishTime)
+                        .orderByAsc(BaseNetPrice::getPrice)
+        );
+    }
+
+    @Override
+    public Page<BaseNetPrice> getPageBySameArea(NetPriceQuery query) {
+        handleMaterial(query);
+        return null;
+    }
+
+    @Override
+    public Page<BaseNetPrice> getPageBySameManufacturer(NetPriceQuery query) {
+        handleMaterial(query);
+        return null;
+    }
+
+    @Override
+    public Page<BaseNetPrice> getPage(NetPriceQuery query) {
+        Set<String> materialNames = handleMaterialName(query);
+        List<String> areas = handleAreas(query.getArea());
+        return netPriceMapper.selectPage(new Page<>(query.getPage(), query.getPageSize()),
+            new LambdaQueryWrapper<BaseNetPrice>()
+                .in(materialNames != null && !materialNames.isEmpty(), BaseNetPrice::getMaterialName, materialNames)
+                .between(query.getPublishDate() != null, BaseNetPrice::getPublishTime, query.getPublishDate() + " 00:00:00", query.getPublishDate() + " 23:59:59")
+                .in(StringUtils.hasText(query.getArea()), BaseNetPrice::getArea, areas)
+                .orderByDesc(BaseNetPrice::getPublishTime)
+                .orderByDesc(BaseNetPrice::getPrice)
+        );
+    }
+    /**
+     * 处理物料 物料名称-材质-规格
+     * @param query
+     **/
+    private void handleMaterial(NetPriceQuery query){
+        String material = query.getMaterial();
+        String[] split = material.split("-");
+        String s = split[0];
+        String materialName = "";
+        if (StringUtils.hasText(s)) {
+            if (s.equals(PANYUAN)) {
+                materialName=GAOXIAN;
+            }else if (s.equals(GAOXIAN)){
+                materialName=PANYUAN;
+            }
+        }
+        query.setMaterialName(materialName);
+        query.setMaterialMaterial(split[1]);
+        query.setMaterialSpec(split[2]);
+    }
+    private Set<String> handleMaterialName(NetPriceQuery query){
         Set<String> materialNames = null;
         if (query.getMaterialNames() != null && !query.getMaterialNames().isEmpty()) {
             materialNames = new HashSet<>(query.getMaterialNames());
@@ -62,29 +122,15 @@ public class BaseNetPriceServiceImpl implements BaseNetPriceService {
                 materialNames.add(PANYUAN);
             }
         }
-        List<String> areas = getAreas(query.getArea());
-        Page<BaseNetPrice> page = netPriceMapper.selectPage(new Page<>(query.getPage(), query.getPageSize()),
-            new LambdaQueryWrapper<BaseNetPrice>()
-                .in(materialNames != null && !materialNames.isEmpty(), BaseNetPrice::getMaterialName, materialNames)
-                .between(query.getPublishDate() != null, BaseNetPrice::getPublishTime, query.getPublishDate() + " 00:00:00", query.getPublishDate() + " 23:59:59")
-                .in(StringUtils.hasText(query.getArea()), BaseNetPrice::getArea, areas)
-                .orderByDesc(BaseNetPrice::getPublishTime)
-                .orderByDesc(BaseNetPrice::getPrice)
-        );
-        List<NetPriceVO> records = page.getRecords().stream().map(this::getVO).collect(Collectors.toList());
-        Page<NetPriceVO> pageListView = new Page<>();
-        pageListView.setRecords(records);
-        pageListView.setTotal(page.getTotal());
-        return pageListView;
+        return materialNames;
     }
-
     /**
      * 匹配网价区域
      *
      * @param areaId 查询对象
      * @return 区域
      */
-    private List<String> getAreas(String areaId) {
+    private List<String> handleAreas(String areaId) {
         List<BaseArea> areas = new ArrayList<>();
         if (StringUtils.hasText(areaId)) {
             // 若ID 为中国，则需要获取省和市
@@ -194,7 +240,6 @@ public class BaseNetPriceServiceImpl implements BaseNetPriceService {
             }
         });
     }
-
     @Override
     public void getNetPriceDate() {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -257,23 +302,23 @@ public class BaseNetPriceServiceImpl implements BaseNetPriceService {
     }
 
     @Override
-    public List<NetPriceSourceVO> getSource() {
-        NetPriceSourceVO sourceVO = new NetPriceSourceVO(1, "我的钢铁网");
-        List<NetPriceSourceVO> result = new ArrayList<>();
+    public List<NetPriceSourceDTO> getSource() {
+        NetPriceSourceDTO sourceVO = new NetPriceSourceDTO(1, "我的钢铁网");
+        List<NetPriceSourceDTO> result = new ArrayList<>();
         result.add(sourceVO);
         return result;
     }
 
     @Override
-    public List<PikeNetPriceVO> selectPikeNetPrice(List<PikeNetPriceQuery> netPriceQuery) {
-        List<PikeNetPriceVO> netPrices = new ArrayList<>();
+    public List<PikeNetPriceDTO> selectPikeNetPrice(List<PikeNetPriceQuery> netPriceQuery) {
+        List<PikeNetPriceDTO> netPrices = new ArrayList<>();
         netPriceQuery.stream().forEach(query -> {
             Integer count = netPriceMapper.selectNetPriceCount(
                 StringUtils.replace(query.getArea(), " ", ""),
                 query.getPublishTime() + " 00:00:00",
                 query.getPublishTime() + " 23:59:59");
             // 判断库中是否有该城市指定日期网价数据,有则从数据库获取,没有则从钢铁网重新获取
-            PikeNetPriceVO pikeNetPrice = BeanMapper.map(query, PikeNetPriceVO.class);
+            PikeNetPriceDTO pikeNetPrice = BeanMapper.map(query, PikeNetPriceDTO.class);
             if (count != null && count > 0) {
                 pikeNetPrice.setNetPrices(getNetPriceFromDb(query));
             }
@@ -301,7 +346,7 @@ public class BaseNetPriceServiceImpl implements BaseNetPriceService {
      * @param query 查询条件
      * @return result
      */
-    private List<NetPriceVO> getNetPriceFromDb(PikeNetPriceQuery query) {
+    private List<NetPriceDTO> getNetPriceFromDb(PikeNetPriceQuery query) {
         String area = StringUtils.replace(query.getArea(), " ", "");
         String material = StringUtils.replace(query.getMaterial(), " ", "");
         List<String> materialNames = null;
@@ -398,8 +443,8 @@ public class BaseNetPriceServiceImpl implements BaseNetPriceService {
 //    }
 
 
-    public NetPriceVO getVO(BaseNetPrice baseNetPrice) {
-        return new NetPriceVO(baseNetPrice);
+    public NetPriceDTO getVO(BaseNetPrice baseNetPrice) {
+        return new NetPriceDTO(baseNetPrice);
     }
 
     /**
@@ -409,7 +454,7 @@ public class BaseNetPriceServiceImpl implements BaseNetPriceService {
      * @param dataFormat   时间格式化字符串
      * @return result
      */
-    public NetPriceVO getVO(BaseNetPrice baseNetPrice, String dataFormat) {
-        return new NetPriceVO(baseNetPrice, dataFormat);
+    public NetPriceDTO getVO(BaseNetPrice baseNetPrice, String dataFormat) {
+        return new NetPriceDTO(baseNetPrice, dataFormat);
     }
 }

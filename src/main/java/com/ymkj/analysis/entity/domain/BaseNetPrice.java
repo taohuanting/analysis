@@ -1,4 +1,4 @@
-package com.ymkj.analysis.domain;
+package com.ymkj.analysis.entity.domain;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
@@ -12,7 +12,7 @@ import java.util.Date;
 /**
  * t_base_steel网价实体类
  *
- * @author wkn
+ * @author tao
  */
 @Data
 @TableName(value = "t_base_net_price")

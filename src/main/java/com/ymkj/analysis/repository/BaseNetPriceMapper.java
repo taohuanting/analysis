@@ -2,14 +2,14 @@ package com.ymkj.analysis.repository;
 
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.ymkj.analysis.domain.BaseNetPrice;
+import com.ymkj.analysis.entity.domain.BaseNetPrice;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
 /**
- * @author wkn
+ * @author tao
  */
 @Mapper
 public interface BaseNetPriceMapper extends BaseMapper<BaseNetPrice> {

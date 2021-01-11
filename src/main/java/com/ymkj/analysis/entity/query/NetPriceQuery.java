@@ -1,4 +1,4 @@
-package com.ymkj.analysis.service.query;
+package com.ymkj.analysis.entity.query;
 
 
 
@@ -13,7 +13,7 @@ import java.util.List;
 /**
  * 网价高级条件分页查询条件类
  *
- * @author wkn
+ * @author tao
  */
 @EqualsAndHashCode(callSuper = true)
 @Data

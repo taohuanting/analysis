@@ -1,4 +1,4 @@
-package com.ymkj.analysis.service.vo;
+package com.ymkj.analysis.entity.dto;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -6,10 +6,10 @@ import lombok.Data;
 import java.util.List;
 
 /**
- * @author wkn
+ * @author tao
  */
 @Data
-public class PikeNetPriceVO {
+public class PikeNetPriceDTO {
     /**
      * 物料名称
      */
@@ -44,5 +44,5 @@ public class PikeNetPriceVO {
      * 网价列表
      */
     @ApiModelProperty(value = "网价列表", required = true)
-    private List<NetPriceVO> netPrices;
+    private List<NetPriceDTO> netPrices;
 }

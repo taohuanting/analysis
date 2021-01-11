@@ -1,4 +1,4 @@
-package com.ymkj.analysis.service.query;
+package com.ymkj.analysis.entity.query;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
