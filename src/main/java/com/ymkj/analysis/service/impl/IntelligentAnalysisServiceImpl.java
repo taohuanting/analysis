@@ -1,6 +1,7 @@
 package com.ymkj.analysis.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ymkj.analysis.entity.domain.*;
 import com.ymkj.analysis.entity.dto.*;
@@ -9,6 +10,7 @@ import com.ymkj.analysis.entity.query.BaseQuery;
 import com.ymkj.analysis.entity.query.NetPriceQuery;
 import com.ymkj.analysis.repository.BaseNetPriceMapper;
 import com.ymkj.analysis.service.IntelligentAnalysisService;
+import com.ymkj.analysis.utils.BeanMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -37,8 +39,19 @@ public class IntelligentAnalysisServiceImpl implements IntelligentAnalysisServic
 
     @Override
     public Page<NetPriceMaterial> getMaterialList(BaseQuery query) {
-        netPriceMapper.selectPage(new Page<>(query.getPage(),query.getPageSize()),new LambdaQueryWrapper<BaseNetPrice>());
-        return null;
+        Page<BaseNetPrice> page = netPriceMapper.selectPage(new Page<>(query.getPage(), query.getPageSize()),
+                new QueryWrapper<BaseNetPrice>()
+                        .select("DISTINCT `material_name_`", "material_", "specification_", "unit_")
+                .orderByAsc("material_name_")
+                .orderByAsc("material_")
+                .orderByAsc("specification_")
+        );
+        Page<NetPriceMaterial> result = new Page<>();
+        List<BaseNetPrice> records = page.getRecords();
+        page.setRecords(null);
+        BeanMapper.mapIgnoreEmpty(page,result);
+        result.setRecords(BeanMapper.mapListIgnoreEmpty(records,NetPriceMaterial.class));
+        return result;
     }
 
     @Override
@@ -48,7 +61,15 @@ public class IntelligentAnalysisServiceImpl implements IntelligentAnalysisServic
 
     @Override
     public BaseNetPrice getNetPriceByMaterialAndDate(AnalysisQuery query) {
-        return null;
+        return netPriceMapper.selectOne(new LambdaQueryWrapper<BaseNetPrice>()
+                .eq(StringUtils.hasText(query.getMaterialName()),BaseNetPrice::getMaterialName,query.getMaterialName())
+                .eq(StringUtils.hasText(query.getMaterial()),BaseNetPrice::getMaterial,query.getMaterial())
+                .eq(StringUtils.hasText(query.getSpecification()),BaseNetPrice::getSpecification,query.getSpecification())
+                .eq(StringUtils.hasText(query.getArea()),BaseNetPrice::getArea,query.getArea())
+                .eq(StringUtils.hasText(query.getManufacturer()),BaseNetPrice::getManufacturer,query.getManufacturer())
+                .orderByDesc(BaseNetPrice::getPublishTime)
+                .last("limit 1")
+        );
     }
 
     @Override
@@ -61,26 +82,4 @@ public class IntelligentAnalysisServiceImpl implements IntelligentAnalysisServic
         return null;
     }
 
-//
-
-    /**
-     * 处理物料 物料名称-材质-规格
-     * @param query
-     **/
-    private void handleMaterial(NetPriceQuery query){
-        String material = query.getMaterial();
-        String[] split = material.split("-");
-        String s = split[0];
-        String materialName = "";
-        if (StringUtils.hasText(s)) {
-            if (s.equals(PANYUAN)) {
-                materialName=GAOXIAN;
-            }else if (s.equals(GAOXIAN)){
-                materialName=PANYUAN;
-            }
-        }
-        query.setMaterialName(materialName);
-        query.setMaterialMaterial(split[1]);
-        query.setMaterialSpec(split[2]);
-    }
 }

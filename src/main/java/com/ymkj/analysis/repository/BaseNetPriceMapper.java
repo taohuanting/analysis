@@ -53,7 +53,7 @@ public interface BaseNetPriceMapper extends BaseMapper<BaseNetPrice> {
      */
     List<BaseNetPrice> selectNetPriceList(@Param("area") String area, @Param("material") String material, @Param("materialNames") List<String> materialNames, @Param("manufacturerList") List<String> manufacturerList, @Param("startDate") String startDate, @Param("endDate") String endDate);
 
-
+    @Select("select DISTINCT manufacturer_ from t_base_net_price where area_ = #{cityName} order by manufacturer_ asc")
     List<String> selectManufacturerList(String cityName);
 
 }
