@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.ymkj.analysis.entity.domain.BaseNetPrice;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
 
@@ -51,4 +52,8 @@ public interface BaseNetPriceMapper extends BaseMapper<BaseNetPrice> {
      * @return result
      */
     List<BaseNetPrice> selectNetPriceList(@Param("area") String area, @Param("material") String material, @Param("materialNames") List<String> materialNames, @Param("manufacturerList") List<String> manufacturerList, @Param("startDate") String startDate, @Param("endDate") String endDate);
+
+
+    List<String> selectManufacturerList(String cityName);
+
 }

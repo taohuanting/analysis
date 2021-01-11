@@ -27,8 +27,8 @@ repositories {
 }
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation "io.springfox:springfox-boot-starter:3.0.0"
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+//	implementation "io.springfox:springfox-boot-starter:3.0.0"
 
 	runtimeOnly 'mysql:mysql-connector-java'
 	implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:2.1.4'
@@ -42,7 +42,7 @@ dependencies {
 	implementation 'com.github.dozermapper:dozer-core:6.5.0'
 	implementation 'javax.xml.bind:jaxb-api:2.3.1'
 
-	implementation 'com.github.xiaoymin:swagger-bootstrap-ui:1.9.6'
+	implementation 'com.github.xiaoymin:knife4j-spring-boot-starter:2.0.7'
 
 }
 

@@ -3,14 +3,12 @@ package com.ymkj.analysis.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ymkj.analysis.entity.domain.*;
+import com.ymkj.analysis.entity.dto.*;
 import com.ymkj.analysis.repository.BaseNetPriceMapper;
 import com.ymkj.analysis.service.BaseAreaMapper;
 import com.ymkj.analysis.service.BaseNetPriceService;
 import com.ymkj.analysis.entity.query.NetPriceQuery;
 import com.ymkj.analysis.entity.query.PikeNetPriceQuery;
-import com.ymkj.analysis.entity.dto.NetPriceSourceDTO;
-import com.ymkj.analysis.entity.dto.NetPriceDTO;
-import com.ymkj.analysis.entity.dto.PikeNetPriceDTO;
 import com.ymkj.analysis.utils.BeanMapper;
 import com.ymkj.analysis.utils.DateUtil;
 import com.ymkj.analysis.utils.SystemConst;
@@ -52,29 +50,61 @@ public class BaseNetPriceServiceImpl implements BaseNetPriceService {
 
 
     @Override
-    public Page<BaseNetPrice> getPageBySameTime(NetPriceQuery query) {
+    public SameTimeNetPriceDTO getSameTimeList(NetPriceQuery query) {
         handleMaterial(query);
-        return netPriceMapper.selectPage(new Page<>(query.getPage(), query.getPageSize()),
-                new LambdaQueryWrapper<BaseNetPrice>()
-                        .eq(StringUtils.hasText(query.getMaterialName()), BaseNetPrice::getMaterialName, query.getMaterialName())
-                        .eq(StringUtils.hasText(query.getMaterialMaterial()), BaseNetPrice::getMaterial, query.getMaterialMaterial())
-                        .eq(StringUtils.hasText(query.getMaterialSpec()), BaseNetPrice::getSpecification, query.getMaterialSpec())
-                        .between(null!=query.getPublishDateStart()&&null!=query.getPublishDateEnd(), BaseNetPrice::getPublishTime, query.getPublishDateStart(), query.getPublishDateEnd())
-                        .in(CollectionUtils.isNotEmpty(query.getAreas()), BaseNetPrice::getArea, query.getAreas())
-                        .orderByDesc(BaseNetPrice::getPublishTime)
-                        .orderByAsc(BaseNetPrice::getPrice)
+        List<BaseNetPrice> netPrices = netPriceMapper.selectList(new LambdaQueryWrapper<BaseNetPrice>()
+                .eq(StringUtils.hasText(query.getMaterialName()),BaseNetPrice::getMaterialName,query.getMaterialName())
+                .eq(StringUtils.hasText(query.getMaterialMaterial()),BaseNetPrice::getMaterial,query.getMaterialMaterial())
+                .eq(StringUtils.hasText(query.getMaterialSpec()),BaseNetPrice::getSpecification,query.getMaterialSpec())
+                .gt(null!=query.getPublishDateStart(),BaseNetPrice::getPublishTime,query.getPublishDateStart())
+                .lt(null!=query.getPublishDateEnd(),BaseNetPrice::getPublishTime,query.getPublishDateEnd())
+                .orderByDesc(BaseNetPrice::getPublishTime)
         );
+        return getSameTimeNetPriceDTO(netPrices);
+    }
+    @Override
+    public SameAreaNetPriceDTO getSameAreaList(NetPriceQuery query) {
+        handleMaterial(query);
+        List<BaseNetPrice> netPrices = netPriceMapper.selectList(new LambdaQueryWrapper<BaseNetPrice>()
+                .eq(StringUtils.hasText(query.getMaterialName()),BaseNetPrice::getMaterialName,query.getMaterialName())
+                .eq(StringUtils.hasText(query.getMaterialMaterial()),BaseNetPrice::getMaterial,query.getMaterialMaterial())
+                .eq(StringUtils.hasText(query.getMaterialSpec()),BaseNetPrice::getSpecification,query.getMaterialSpec())
+                .eq(StringUtils.hasText(query.getArea()),BaseNetPrice::getArea,query.getArea())
+                .gt(null!=query.getPublishDateStart(),BaseNetPrice::getPublishTime,query.getPublishDateStart())
+                .lt(null!=query.getPublishDateEnd(),BaseNetPrice::getPublishTime,query.getPublishDateEnd())
+                .orderByDesc(BaseNetPrice::getPublishTime)
+        );
+        return getSameAreaNetPriceDTO(netPrices);
     }
 
     @Override
-    public Page<BaseNetPrice> getPageBySameArea(NetPriceQuery query) {
+    public SameManufacturerNetPriceDTO getSameManufacturerList(NetPriceQuery query) {
         handleMaterial(query);
+        List<BaseNetPrice> netPrices = netPriceMapper.selectList(new LambdaQueryWrapper<BaseNetPrice>()
+                .eq(StringUtils.hasText(query.getMaterialName()),BaseNetPrice::getMaterialName,query.getMaterialName())
+                .eq(StringUtils.hasText(query.getMaterialMaterial()),BaseNetPrice::getMaterial,query.getMaterialMaterial())
+                .eq(StringUtils.hasText(query.getMaterialSpec()),BaseNetPrice::getSpecification,query.getMaterialSpec())
+                .eq(StringUtils.hasText(query.getManufacturer()),BaseNetPrice::getManufacturer,query.getManufacturer())
+                .gt(null!=query.getPublishDateStart(),BaseNetPrice::getPublishTime,query.getPublishDateStart())
+                .lt(null!=query.getPublishDateEnd(),BaseNetPrice::getPublishTime,query.getPublishDateEnd())
+                .orderByDesc(BaseNetPrice::getPublishTime)
+        );
+        return getSameManufacturerNetPriceDTO(netPrices);
+    }
+
+    private SameTimeNetPriceDTO getSameTimeNetPriceDTO(List<BaseNetPrice> list){
+        // TODO: 2021/1/11
+
         return null;
     }
+    private SameAreaNetPriceDTO getSameAreaNetPriceDTO(List<BaseNetPrice> list){
+        // TODO: 2021/1/11
 
-    @Override
-    public Page<BaseNetPrice> getPageBySameManufacturer(NetPriceQuery query) {
-        handleMaterial(query);
+        return null;
+    }
+    private SameManufacturerNetPriceDTO getSameManufacturerNetPriceDTO(List<BaseNetPrice> list){
+        // TODO: 2021/1/11
+
         return null;
     }
 

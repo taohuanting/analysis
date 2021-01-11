@@ -4,10 +4,10 @@ package com.ymkj.analysis.service;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ymkj.analysis.entity.domain.BaseNetPrice;
+import com.ymkj.analysis.entity.dto.*;
+import com.ymkj.analysis.entity.query.BaseQuery;
 import com.ymkj.analysis.entity.query.NetPriceQuery;
 import com.ymkj.analysis.entity.query.PikeNetPriceQuery;
-import com.ymkj.analysis.entity.dto.NetPriceSourceDTO;
-import com.ymkj.analysis.entity.dto.PikeNetPriceDTO;
 
 import java.util.List;
 
@@ -52,9 +52,10 @@ public interface BaseNetPriceService  {
      */
     List<PikeNetPriceDTO> selectPikeNetPrice(List<PikeNetPriceQuery> netPriceQuery);
 
-    Page<BaseNetPrice> getPageBySameTime(NetPriceQuery query);
+    SameTimeNetPriceDTO getSameTimeList(NetPriceQuery query);
 
-    Page<BaseNetPrice> getPageBySameArea(NetPriceQuery query);
+    SameAreaNetPriceDTO getSameAreaList(NetPriceQuery query);
 
-    Page<BaseNetPrice> getPageBySameManufacturer(NetPriceQuery query);
+    SameManufacturerNetPriceDTO getSameManufacturerList(NetPriceQuery query);
+
 }

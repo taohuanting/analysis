@@ -2,6 +2,11 @@ package com.ymkj.analysis.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ymkj.analysis.entity.domain.BaseNetPrice;
+import com.ymkj.analysis.entity.dto.NetPriceMaterial;
+import com.ymkj.analysis.entity.dto.SameAreaNetPriceDTO;
+import com.ymkj.analysis.entity.dto.SameManufacturerNetPriceDTO;
+import com.ymkj.analysis.entity.dto.SameTimeNetPriceDTO;
+import com.ymkj.analysis.entity.query.BaseQuery;
 import com.ymkj.analysis.entity.query.NetPriceQuery;
 import com.ymkj.analysis.service.BaseNetPriceService;
 import io.swagger.annotations.Api;
@@ -11,6 +16,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 /**
  * @ClassName BaseNetController
  * @Author tao
@@ -18,7 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
  **/
 @Api(tags = "网价API")
 @RestController
-@RequestMapping(value = "/net-price")
+@RequestMapping(value = "/base")
 public class BaseNetController {
     @Autowired
     private BaseNetPriceService baseNetPriceService;
@@ -29,24 +36,24 @@ public class BaseNetController {
         return baseNetPriceService.getPage(query);
     }
 
-//物料（名称，材质，规格）  时间  城市 厂家
+    //变量有 ： 物料（名称，材质，规格） 时间  城市 厂家
 
     @GetMapping("/same-time")
     @ApiOperation(value = "同一物料、时间，各城市价格查询", notes = "取各城市当天先发布的")
-    public Page<BaseNetPrice> sameTime(NetPriceQuery query) {
-        return baseNetPriceService.getPageBySameTime(query);
+    public SameTimeNetPriceDTO sameTime(NetPriceQuery query) {
+        return baseNetPriceService.getSameTimeList(query);
     }
 
     @GetMapping("/same-area")
     @ApiOperation(value = "同一物料、城市，指定时间段内价格查询", notes = "取各城市当天先发布的")
-    public Page<BaseNetPrice> sameArea(NetPriceQuery query) {
-        return baseNetPriceService.getPageBySameArea(query);
+    public SameAreaNetPriceDTO sameArea(NetPriceQuery query) {
+        return baseNetPriceService.getSameAreaList(query);
     }
 
     @GetMapping("/same-manufacturer")
     @ApiOperation(value = "同一物料、厂家，指定时间段内价格查询", notes = "取每天第一次发布的")
-    public Page<BaseNetPrice> sameManufacturer(NetPriceQuery query) {
-        return baseNetPriceService.getPageBySameManufacturer(query);
+    public SameManufacturerNetPriceDTO sameManufacturer(NetPriceQuery query) {
+        return baseNetPriceService.getSameManufacturerList(query);
     }
 
 }

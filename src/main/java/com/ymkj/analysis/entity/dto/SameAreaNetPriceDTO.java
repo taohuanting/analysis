@@ -1,6 +1,7 @@
 package com.ymkj.analysis.entity.dto;
 
 
+import com.ymkj.analysis.entity.domain.BaseNetPrice;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -25,8 +26,5 @@ public class SameAreaNetPriceDTO implements Serializable {
 
     @ApiModelProperty("发布时间价格集合")
     private List<TimePrice> timePriceList;
-
-
-
 
 }
