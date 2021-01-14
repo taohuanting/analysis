@@ -1,8 +1,11 @@
 package com.ymkj.analysis.entity.dto;
 
+import com.ymkj.analysis.entity.domain.BaseNetPrice;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+
+import java.util.Date;
 
 /**
  * @ClassName TimePrice
@@ -14,7 +17,7 @@ import lombok.Data;
 public  class TimePrice {
 
     @ApiModelProperty("发布时间")
-    private String publishDate;
+    private Date publishDate;
 
     @ApiModelProperty("厂商")
     private String manufacturer;
@@ -24,4 +27,14 @@ public  class TimePrice {
 
     @ApiModelProperty("日环比涨跌")
     private String fluctuate;
+
+    public TimePrice(BaseNetPrice netPrice) {
+        this.publishDate = netPrice.getPublishTime();
+        this.manufacturer = netPrice.getManufacturer();
+        this.price = netPrice.getPrice();
+        this.fluctuate = netPrice.getRaise();
+    }
+
+    public TimePrice() {
+    }
 }

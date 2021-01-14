@@ -56,5 +56,41 @@ public class IntelligentAnalysis {
     @ApiOperation(value = "物料网价对比", notes = "必传：物料（名称，材质，规格）")
     public Map<String, SameManufacturerNetPriceDTO> compare(@RequestBody AnalysisQuery query) {
         return intelligentAnalysisService.compare(query);
+        /*
+        {
+  "area": "成都",
+  "compareList": [
+    {
+      "area": "成都",
+      "manufacturer": "长峰"
+    },
+        {
+      "area": "成都",
+      "manufacturer": "成实"
+    },
+        {
+      "area": "成都",
+      "manufacturer": "金泉"
+    },
+        {
+      "area": "成都",
+      "manufacturer": "益鑫"
+    },
+        {
+      "area": "成都",
+      "manufacturer": "川中"
+    }
+  ],
+  "manufacturer": "",
+  "material": "HRB400E",
+  "materialName": "螺纹钢",
+  "page": 0,
+  "pageSize": 0,
+  "publishDateEnd": "2020-12-01T01:00:37.000",
+  "publishDateStart": "2020-11-01T01:00:37.000",
+  "specification": "Ф10",
+  "status": 0
+}
+         */
     }
 }

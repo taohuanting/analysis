@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 import java.util.List;
@@ -42,11 +43,11 @@ public class AnalysisQuery extends BaseQuery {
     private Date publishDateEnd;
 
     @ApiModelProperty(value = "对比-城市、厂家")
-    private COMPARE compareList;
+    private List<Compare> compareList;
 
     @Data
     @ApiModel("网价对比参数-城市、厂家")
-    public static class COMPARE{
+    public static class Compare{
 
         @ApiModelProperty(value = "区域")
         private String area;

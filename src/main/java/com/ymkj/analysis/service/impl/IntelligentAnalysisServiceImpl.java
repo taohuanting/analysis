@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 网价业务实现
@@ -56,6 +57,7 @@ public class IntelligentAnalysisServiceImpl implements IntelligentAnalysisServic
 
     @Override
     public List<String> getManufacturerList(String cityName) {
+        cityName=cityName.replace("市","");
         return netPriceMapper.selectManufacturerList(cityName);
     }
 
@@ -74,12 +76,44 @@ public class IntelligentAnalysisServiceImpl implements IntelligentAnalysisServic
 
     @Override
     public List<BaseNetPrice> getOtherNetPriceByMaterial(AnalysisQuery query) {
-        return null;
+        return netPriceMapper.selectList(new LambdaQueryWrapper<BaseNetPrice>()
+                .eq(StringUtils.hasText(query.getMaterialName()),BaseNetPrice::getMaterialName,query.getMaterialName())
+                .eq(StringUtils.hasText(query.getMaterial()),BaseNetPrice::getMaterial,query.getMaterial())
+                .eq(StringUtils.hasText(query.getSpecification()),BaseNetPrice::getSpecification,query.getSpecification())
+                .orderByDesc(BaseNetPrice::getPublishTime)
+                .last("limit 3")
+        );
     }
 
     @Override
     public Map<String, SameManufacturerNetPriceDTO> compare(AnalysisQuery query) {
-        return null;
+        Map<String, SameManufacturerNetPriceDTO> result = new HashMap<>(8);
+        List<AnalysisQuery.Compare> compareList = query.getCompareList();
+        for (AnalysisQuery.Compare compare : compareList) {
+            List<BaseNetPrice> baseNetPrices = netPriceMapper.selectList(new LambdaQueryWrapper<BaseNetPrice>()
+                    .eq(StringUtils.hasText(query.getMaterialName()), BaseNetPrice::getMaterialName, query.getMaterialName())
+                    .eq(StringUtils.hasText(query.getMaterial()), BaseNetPrice::getMaterial, query.getMaterial())
+                    .eq(StringUtils.hasText(query.getSpecification()), BaseNetPrice::getSpecification, query.getSpecification())
+                    .eq(StringUtils.hasText(compare.getArea()),BaseNetPrice::getArea,compare.getArea())
+                    .eq(StringUtils.hasText(compare.getManufacturer()),BaseNetPrice::getManufacturer,compare.getManufacturer())
+                    .gt(null != query.getPublishDateStart(), BaseNetPrice::getPublishTime, query.getPublishDateStart())
+                    .lt(null != query.getPublishDateEnd(), BaseNetPrice::getPublishTime, query.getPublishDateEnd())
+                    .orderByAsc(BaseNetPrice::getPublishTime));
+            SameManufacturerNetPriceDTO dto = getSameManufacturerNetPriceDTO(baseNetPrices);
+            result.put(compare.getManufacturer(),dto);
+        }
+        return result;
+    }
+
+    private SameManufacturerNetPriceDTO getSameManufacturerNetPriceDTO(List<BaseNetPrice> baseNetPrices) {
+        SameManufacturerNetPriceDTO result = new SameManufacturerNetPriceDTO();
+        BaseNetPrice netPrice = baseNetPrices.get(0);
+        result.setArea(netPrice.getArea());
+        result.setManufacturer(netPrice.getManufacturer());
+        result.setMaterial(new NetPriceMaterial(netPrice));
+        List<TimePrice> collect = baseNetPrices.stream().map(TimePrice::new).collect(Collectors.toList());
+        result.setTimePriceList(collect);
+        return result;
     }
 
 }

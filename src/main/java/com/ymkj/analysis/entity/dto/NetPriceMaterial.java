@@ -1,8 +1,11 @@
 package com.ymkj.analysis.entity.dto;
 
+import com.ymkj.analysis.entity.domain.BaseNetPrice;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * @ClassName NetPriceMaterial
@@ -24,4 +27,14 @@ public class NetPriceMaterial {
 
     @ApiModelProperty("单位")
     private String unit;
+
+    public NetPriceMaterial(BaseNetPrice netPrice) {
+        this.materialName = netPrice.getMaterialName();
+        this.material = netPrice.getMaterial();
+        this.specification = netPrice.getSpecification();
+        this.unit = netPrice.getUnit();
+    }
+
+    public NetPriceMaterial() {
+    }
 }
